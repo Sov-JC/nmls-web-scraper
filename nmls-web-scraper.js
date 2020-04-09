@@ -1,7 +1,12 @@
 information_type = {
 	INDIVIDUAL: 'individual',
-	COMPANY: 'company',	
+	COMPANY: 'company',
 }
+
+function get_individual_contact_name(){
+	return $("p").filter('.individual').text().trim()
+}
+
 
 //returns the nmls number as a string.
 function get_nmls_two(info_type){
@@ -406,8 +411,6 @@ function main(){
 }
 
 
-
-
 function main_two(){
 	//only run this script in a COMPANY or INDIVIDUAL information page
 	var info_type = ""
@@ -423,7 +426,10 @@ function main_two(){
 		case information_type.INDIVIDUAL:
 			var nmls_id = get_nmls_two(info_type)
 			console.log("nmls_id is " + nmls_id)
-			console.log("Not implemented yet")
+			var individual_contact_name = get_individual_contact_name()
+			console.log("individual contact name is " + individual_contact_name)
+
+			console.log("-- Not done implemenenting INDIVIDUAL scraper yet --")
 			break
 		case information_type.COMPANY:
 			//scrape the data 
