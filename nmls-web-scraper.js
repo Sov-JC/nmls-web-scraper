@@ -1,3 +1,35 @@
+information_type = {
+	INDIVIDUAL: 'individual',
+	COMPANY: 'company',	
+}
+
+//returns the nmls number as a string.
+function get_nmls_two(info_type){
+
+	if(info_type == information_type.COMPANY ||
+		info_type == information_type.INDIVIDUAL){
+
+		
+		//get the span, then go up 2 parents, finaly select the following sibling
+		$nmls_span = $("span:contains('NMLS ID:')")
+
+		$nmls_span_parent = $nmls_span.parent()
+		
+		//console.log($nmls_span_parent.html())
+		
+		var nmls = $nmls_span.parent().next().html() //html used, is there a safer way?
+		
+		
+		console.log("FINAL NMLS: " + nmls)
+		return nmls.trim()
+	}
+
+	return ""
+}
+
+function get_nmls_two_test(info_type){
+	get_nmls_two(info_type)
+}
 
 //returns the nmls number as a string 
 function get_nmls(){
@@ -373,4 +405,60 @@ function main(){
 	copy_data_from_text_box()
 }
 
-main()
+
+
+
+function main_two(){
+	//only run this script in a COMPANY or INDIVIDUAL information page
+	var info_type = ""
+
+	if(window.location.href.includes("/EntityDetails.aspx/COMPANY/") == true)
+		info_type = information_type.COMPANY
+	else if(window.location.href.includes("EntityDetails.aspx/INDIVIDUAL/") == true)
+		info_type = information_type.INDIVIDUAL
+	else
+		return //do nothing -- script is not suppose to run on this page
+
+	switch(info_type){
+		case information_type.INDIVIDUAL:
+			var nmls_id = get_nmls_two(info_type)
+			console.log("nmls_id is " + nmls_id)
+			console.log("Not implemented yet")
+			break
+		case information_type.COMPANY:
+			//scrape the data 
+			data = get_data_in_excel_format()
+
+			//log the data so that the person can copy paste
+			//the data from the inspector if the text box's data is faulty.
+			console.log(data)
+
+			//create a div that will hold the text box and copy button
+			$clear_div = $("div.newSearch").next()
+			$content_div = $("<div></div>").addClass("text-and-button")
+			$clear_div.after($content_div)
+
+			//create the box and button 
+			var input_box_el_html = "<input type=\"text\" value = \"\" style=\"width:80%;text-align:center;margin-bottom:1px\" id=\"data\">" //input box
+			var copy_btn_el_html = "<button id = \"copy-button\">Copy data</button>" //copy button	
+			$("#copy-button").on("click", copy_data_from_text_box) //listener: copy the data in the text box to the clip board
+
+			//add the elements. add the event listener to copy button
+			$content_div.append(input_box_el_html)
+			$content_div.append(copy_btn_el_html)
+			$("#copy-button").on("click", copy_data_from_text_box) //listener: copy the data in the text box to the clip board
+
+			//add data to text box
+			$("#data").val(data)
+
+			//automatically copy data onto clipboard for convenience when script it run
+			copy_data_from_text_box()
+			break
+		default:
+			//do nothing
+			break;
+	}
+		
+}
+
+main_two()
