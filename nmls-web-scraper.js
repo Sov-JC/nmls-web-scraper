@@ -330,11 +330,11 @@ function is_authorized_to_represent_test(){
 }
 
 
-//NO LONGER USED
+
 //Returns the "Authorized to Represent" string of an INDIVIDUAL page
 //if the contact is authorized to represent. Returns empty string otherwise
 function get_authorized_to_represent(){
-	if(is_authorized_to_represent)
+	if(is_authorized_to_represent())
 		return $("span.nowrap").filter(":contains('Authorized to Represent')").parent().next().text().trim()
 	else
 		return ""
@@ -358,12 +358,6 @@ function get_all_office_locations(){
 
 	if(is_authorized_to_represent()){
 		var allOffices = []
-
-		//TS
-		var test_data = $("h1:contains('Office Locations')").html()
-		console.log("test_data lenght :: " + test_data.length)
-		console.log("test_data:: " + test_data)
-		//TE
 
 		//TS
 		console.log($("h1:contains('Office Locations')").parent().next().next().children().first().html())
@@ -512,6 +506,109 @@ function get_data_in_excel_format(){
 	return data
 }
 
+
+//returns a string that's copy-pastable in Excel spreadsheets
+function get_data_in_excel_format_two(info_type){
+	var data = ""
+	switch(info_type){
+		case information_type.COMPANY:
+			data = "\t" + 
+			get_company_name() + "\t" +
+			get_nmls(info_type) + "\t" +
+			"\t" +
+			"\t" + 
+			get_sponsored_mlos() + "\t" +
+			get_street_address()[0] + "\t" +
+			get_city() + "\t" +
+			get_state() + "\t" +
+			get_zip_code() + "\t" +
+			get_email() + "\t" +
+			"\t" + //contact
+			get_website() + "\t" +
+			get_dba() + "\t" + 
+			get_phone_number(info_type)
+			break;
+		case information_type.INDIVIDUAL:
+			/*
+			cell 1 is contact name
+			cell 2 is nmls
+			cell 3 is blank
+			cell 4 is blank
+			cell 5 is blank
+			cell 6 is phone number
+			cell 7 is blank
+			cell 8 is Authorized to Represent
+			cell 9 is blank
+			cell 10 is city name
+			cell 11 is state name
+			cell 12 is zip code
+			*/
+
+			/*
+			var individual_contact_name = get_individual_contact_name()
+			console.log("individual contact name is " + individual_contact_name)
+			var contact_nmls_id = get_nmls_two(info_type)
+			console.log("nmls_id is " + nmls_id)
+			var contact_phone_number = get_phone_number(info_type)
+			console.log("phone number is " + phone_number)
+			var authorized_to_represent_text = get_authorized_to_represent()
+			var office_locations = get_all_office_locations()
+			*/
+			var contact_nmls_id = get_nmls(info_type)
+			var contact_phone_number = get_phone_number(info_type)
+			var authorized_to_represent_text = get_authorized_to_represent()
+
+			var office_locations = get_all_office_locations()
+
+			//const LINE_FEED = '&#10;'
+			//const CARRIAGE_RETURN = '&#13;'
+
+			office_locations.forEach(function(item){
+
+				var companyName = item.name
+				var companyNMLS = item.nmlsID
+				var city = item.city
+				var state = item.state
+				var zipCode = item.zipCode
+
+				data += get_individual_contact_name() + "\t" +
+				contact_nmls_id + "\t" +
+				"\t" + 
+				"\t" +
+				"\t" +
+				contact_phone_number + "\t" +
+				"\t" +
+				companyName + "\t" +
+				"\t" +
+				city + "\t" +
+				state + "\t" +
+				zipCode + "\t" +
+				"\n" 
+			})
+
+			break;
+		default:
+			data = ""
+			break;
+	}
+
+	return data
+}
+
+function get_data_in_excel_format_two_test(){
+	var info_type = ""
+
+	if(window.location.href.includes("/EntityDetails.aspx/COMPANY/") == true){
+		info_type = information_type.COMPANY
+		
+	}else if(window.location.href.includes("EntityDetails.aspx/INDIVIDUAL/") == true){
+		info_type = information_type.INDIVIDUAL		
+	}else
+		return //do nothing -- script is not suppose to run on this page
+
+	console.log("excel data :: " + get_data_in_excel_format_two(info_type))
+}
+
 function copy_data_from_text_box(){
 	$data_input_box = $("#data")
 	$data_input_box.focus().select()
@@ -590,7 +687,7 @@ function main(){
 	$clear_div.after($content_div)
 
 	//create the box and button 
-	var input_box_el_html = "<input type=\"text\" value = \"\" style=\"width:80%;text-align:center;margin-bottom:1px\" id=\"data\">" //input box
+	var input_box_el_html = "<input type=\"text\"  value = \"\" style=\"width:80%;text-align:center;margin-bottom:1px\" id=\"data\">" //input box
 	var copy_btn_el_html = "<button id = \"copy-button\">Copy data</button>" //copy button	
 	$("#copy-button").on("click", copy_data_from_text_box) //listener: copy the data in the text box to the clip board
 
@@ -620,33 +717,9 @@ function main_two(){
 
 	switch(info_type){
 		case information_type.INDIVIDUAL:
-			/*
-			cell 1 is contact name
-			cell 2 is nmls
-			cell 3 is blank
-			cell 4 is blank
-			cell 5 is blank
-			cell 6 is phone number
-			cell 7 is blank
-			cell 8 is Authorized to Represent
-			cell 9 is blank
-			cell 10 is city name
-			cell 11 is state name
-			cell 12 is zip code
-			*/
-			var individual_contact_name = get_individual_contact_name()
-			console.log("individual contact name is " + individual_contact_name)
-			var contact_nmls_id = get_nmls_two(info_type)
-			console.log("nmls_id is " + nmls_id)
-			var phone_number = get_phone_number_two(info_type)
-			console.log("phone number is " + phone_number)
-
-
-			console.log("-- Not done implemenenting INDIVIDUAL scraper yet --")
-			break
-		case information_type.COMPANY:
+			console.log("THIS IS AN INDIVIDUAL PAGE")
 			//scrape the data 
-			data = get_data_in_excel_format()
+			var data = get_data_in_excel_format_two(info_type)
 
 			//log the data so that the person can copy paste
 			//the data from the inspector if the text box's data is faulty.
@@ -657,7 +730,37 @@ function main_two(){
 			$content_div = $("<div></div>").addClass("text-and-button")
 			$clear_div.after($content_div)
 
-			//create the box and button 
+			//create the text area and button 
+			var text_box_el_html = "<textarea type=\"text\" value = \"\" style=\"width:80%;text-align:center;margin-bottom:1px\" id=\"data\" rows=10>" //text area
+			var copy_btn_el_html = "<button id = \"copy-button\">Copy data</button>" //copy button	
+			$("#copy-button").on("click", copy_data_from_text_box) //listener: copy the data in the text box to the clip board
+
+			//add the elements. add the event listener to copy button
+			$content_div.append(text_box_el_html)
+			$content_div.append(copy_btn_el_html)
+			$("#copy-button").on("click", copy_data_from_text_box) //listener: copy the data in the text box to the clip board
+
+			//add data to text box
+			$("#data").val(data)
+
+			//automatically copy data onto clipboard for convenience when script is run
+			copy_data_from_text_box()
+			break
+		case information_type.COMPANY:
+			console.log("THIS IS A COMPANY PAGE")
+			//scrape the data 
+			var data = get_data_in_excel_format_two(info_type)
+
+			//log the data so that the person can copy paste
+			//the data from the inspector if the text box's data is faulty.
+			console.log(data)
+
+			//create a div that will hold the text box and copy button
+			$clear_div = $("div.newSearch").next()
+			$content_div = $("<div></div>").addClass("text-and-button")
+			$clear_div.after($content_div)
+
+			//create the input box and button 
 			var input_box_el_html = "<input type=\"text\" value = \"\" style=\"width:80%;text-align:center;margin-bottom:1px\" id=\"data\">" //input box
 			var copy_btn_el_html = "<button id = \"copy-button\">Copy data</button>" //copy button	
 			$("#copy-button").on("click", copy_data_from_text_box) //listener: copy the data in the text box to the clip board
@@ -670,7 +773,7 @@ function main_two(){
 			//add data to text box
 			$("#data").val(data)
 
-			//automatically copy data onto clipboard for convenience when script it run
+			//automatically copy data onto clipboard for convenience when script is run
 			copy_data_from_text_box()
 			break
 		default:
@@ -694,16 +797,19 @@ function test_office_objects(){
 	console.assert(office_one.city == "")
 }
 
+
+
 function tests(){
 	//test_office_objects()
-	get_all_office_locations_test()
+	//get_all_office_locations_test()
+	//get_data_in_excel_format_two_test()
 }
 
 function run(){
-	run_main = false
+	run_main = true
 
 	if(run_main){
-		main()
+		main_two()
 	}else{		
 		tests()
 	}
