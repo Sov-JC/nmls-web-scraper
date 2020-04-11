@@ -18,7 +18,7 @@ function get_individual_contact_name(){
 }
 
 //returns the nmls number as a string.
-function get_nmls_two(info_type){
+function get_nmls(info_type){
 
 	if(info_type == information_type.COMPANY ||
 		info_type == information_type.INDIVIDUAL){
@@ -45,8 +45,9 @@ function get_nmls_two_test(info_type){
 	get_nmls_two(info_type)
 }
 
-//returns the nmls number as a string 
-function get_nmls(){
+/*
+//returns the nmls number as a string of a company from a COMPANY page
+function get_nmls_OLD(){
     //get the span, then go up 2 parents, finaly select the following sibling
     $nmls_span = $("span:contains('NMLS ID:')")
 
@@ -60,8 +61,9 @@ function get_nmls(){
     console.log("FINAL NMLS: " + nmls)
     return nmls.trim()
 }
+*/
 
-//get the street address
+//get the street address of a company from a COMPANY page
 //returns an array. First element is street address 1, second element is street address 2
 function get_street_address(){
     //$street_address_span = $("span:contains('Street&nbsp;Address')")
@@ -120,7 +122,8 @@ function get_street_address(){
     return [street_address_one, street_address_two]
 }
 
-function get_phone_number(){
+/*
+function get_phone_number_OLD(){
 	$phone_label_el = $("td.label").filter(":contains('Phone')").eq(0)
 	//There is actually another td.label that contains 'Phone', but it is actually hidden!
 	//Since it occurs after the first td label that we are interested in, we ignore it by
@@ -134,8 +137,10 @@ function get_phone_number(){
 
 	return phone_number
 }
+*/
 
-function get_phone_number_two(info_type){
+
+function get_phone_number(info_type){
 	//method for scraping INDIVIDUAL and COMPANY phone number is the same
 	if(info_type == information_type.COMPANY ||
 		info_type == information_type.INDIVIDUAL){
@@ -363,7 +368,7 @@ function get_all_office_locations(){
 		//TS
 		console.log($("h1:contains('Office Locations')").parent().next().next().children().first().html())
 		//TE
-		
+
 		//get table body where Office Locations data is stored
 		var $tbody_el = $("h1:contains('Office Locations')").parent().next().next().children().first()
 
@@ -513,6 +518,7 @@ function copy_data_from_text_box(){
 	document.execCommand("copy")
 }
 
+/*
 //DEPRECATED
 function add_input_box_and_copy_button_old(){
 	var input_el_html = "<input type=\"text\" value = \"\" style=\"width:80%;text-align:center;margin-bottom:1px\" id=\"data\">" //input box
@@ -522,7 +528,9 @@ function add_input_box_and_copy_button_old(){
 	//listener: copy the data in the text box to the clip board
 	$("#copy-button").on("click", copy_data_from_text_box)
 }
+*/
 
+/*
 //DEPRECATED
 function create_input_box_and_copy_button_old(){
 	var input_el_html = "<input type=\"text\" value = \"\" style=\"width:80%;text-align:center;margin-bottom:1px\" id=\"data\">" //input box
@@ -533,7 +541,9 @@ function create_input_box_and_copy_button_old(){
 
 	return [input_el_html, copy_el_html]
 }
+*/
 
+/*
 //DEPRECATED
 function main_old(){	
 	//scrape the data 
@@ -559,6 +569,7 @@ function main_old(){
 	//so the user doesn't have to hit the "Copy" button after the script runs
 	copy_data_from_text_box()
 }
+*/
 
 function main(){
 	//only run this script in a COMPANY information page
@@ -625,7 +636,7 @@ function main_two(){
 			*/
 			var individual_contact_name = get_individual_contact_name()
 			console.log("individual contact name is " + individual_contact_name)
-			var nmls_id = get_nmls_two(info_type)
+			var contact_nmls_id = get_nmls_two(info_type)
 			console.log("nmls_id is " + nmls_id)
 			var phone_number = get_phone_number_two(info_type)
 			console.log("phone number is " + phone_number)
