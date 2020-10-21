@@ -815,4 +815,6 @@ function run(){
 	}
 }
 
-run()
+$( document ).ready(function() {
+    run()
+});
