@@ -119,7 +119,7 @@ function get_street_address(){
 	street_address_two = $street_address_two_el.text().trim()
 
 
-    return [street_address_one, street_address_two]
+	return [street_address_one, street_address_two]
 }
 
 /*
@@ -157,7 +157,7 @@ function get_phone_number(info_type){
 
 		return phone_number
 	}else{
-		return ""	
+		return ""
 	}
 }
 
@@ -668,6 +668,7 @@ function main_old(){
 }
 */
 
+// Delete this function??
 function main(){
 	//only run this script in a COMPANY information page
 	if(window.location.href.includes("/EntityDetails.aspx/COMPANY/") == false)
