@@ -142,6 +142,14 @@ class setUp{
 
 $(document).ready(
 	function () {
-		setUp.run()
+		// Check that the current page is "https://sprout.mortgageiqcrm.com/client/InsertContactAccount.aspx?modeid=Insert"
+		// if it is, run the setUp, if not then do nothing.
+		var EXPECTED_HREF = "https://sprout.mortgageiqcrm.com/client/InsertContactAccount.aspx?modeid=Insert"
+		var href = window.location.href
+
+		if(href!=EXPECTED_HREF)
+			return
+		else
+			setUp.run()
 	}
 );
