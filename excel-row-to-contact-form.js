@@ -10,53 +10,40 @@ class ExcelRowData {
 	static ZIP_COL = 9
 	static EMAIL_COL = 10
 	static PHONE_COL = 14
+	static LEGAL_NAME_COL = 1
 
-	// Represents the excel row where each element represents a column
-	// from the excel row data
+	// Represents the excel row where each element is a column
+	// from the excel row.
 	excelRowDataSplit = []
 	
 	getData(excelRowDataConstant){
-		// returns a string of the data for the column "excelRowDataConstant"
+		// Returns a string of the data for the column "excelRowDataConstant"
 		// for example: excelRowDataConstant(ExcelRowData.NMLS_COL)
+
 		return excelRowDataSplit[excelRowDataConstant]
 	}
 	
 	constructor(excelRowData){
-		// get data from 
-		// excelRowData and initialize 
-		// variables to corresponding data
+		// Get data from 
+		// ExcelRowData and initialize variables
+		// to corresponding data.
 
-		// constants
-
-		// this.contact = ""; // as of this version, just leave it blank
-		this.email = "email";
-		this.workPhone = "workPhone";
-		// this.address = "address";
-		this.nmls = "nmls";
-
-		console.log("Type of excelRowData is: " + typeof(exceLRowData));
 		self.excelRowDataSplit = excelRowData.split("\t");
-
-		console.log("Excel Row Data is:\n[" + excelRowData + "]");
-		console.log("excelRowDataSplit: " + self.excelRowDataSplit);
 	}
 }
 
 class ContactFormFiller{
 
-	constructor(){
-	}
-
 	static setContactField(contact){
-
+		document.getElementById("MainContent_InsertContact_nmeContactName-TextBox").value = contact;
 	}
 
 	static setAccountField(accountName){
-
+		document.getElementById("MainContent_InsertContact_txtContactAccountName").value = accountName;
 	}
 
 	static setEmailField(email){
-		$("#MainContent_InsertContact_emlContactEmail_emailText").val(email);
+		document.getElementById("MainContent_InsertContact_emlContactEmail_emailText").value = email;
 	}
 
 	static setWorkPhoneField(workPhone){
@@ -69,8 +56,8 @@ class ContactFormFiller{
 				numbers+=(char+"");
 		}
 
-		if(numbers.length != 10) //expected 10 digits
-			return "";
+		if(numbers.length != 10) // Expected 10 digits. If not 10, just return as is
+			return workPhone
 
 		var n = numbers;
 
@@ -85,101 +72,60 @@ class ContactFormFiller{
 	}
 
 	static setAddress(street, city, state, zipcode){
-		// Set the address in the Contact and Account information sections.
+		// Set the address in the Contact and Account information sections. 
 
 		// Format the address. Fill the relevant fields.
 		var formattedAddress = street + "\n" + city + ", " + state + " " + zipcode;
 		
 		// Address field - Contact information section
-		document.getElementById("MainContent_InsertContact_miqAddressBox").setAttribute("value", formattedAddres);
+		document.getElementById("MainContent_InsertContact_miqAddressBox").setAttribute("value", formattedAddress);
 		document.getElementById("MainContent_InsertContact_miqAddressBox").value = formattedAddress;
 
 		// Address field - Account information section
-		document.getElementById("MainContent_InsertContact_miqAAddressBox").setAttribute("value", formattedAddres); 
+		document.getElementById("MainContent_InsertContact_miqAAddressBox").setAttribute("value", formattedAddress); 
 		document.getElementById("MainContent_InsertContact_miqAAddressBox").value = formattedAddress;
 	}
 
 	static setNMLSField(nmls){
-
-	}
-
-	static fillForm(excelData){
-
+		document.getElementById("MainContent_InsertContact_txtNMLS").value = nmls
 	}
 }
 
-// class FillFromClipboardBtn{
-
-// 	constructor(){
-// 		this.generateBtn();
-// 	}
-
-// 	generateBtn(){
-// 		//return a JQuery object representing the 
-// 		//"Fill from clipboard button"
-// 		return $("<btn>Fill from clipboard button</btn>")
-// 	}
-
-// 	insertBtnToDom(){
-		
-// 	}
-// }
-
-// excelData = new ExcelData()
-
-// $FillFromClipboardBtn = $("<btn></btn");
-// $FillFromClipboardBtn.innerHtml = "Fill from clipboard";
-
 class setUp{
-
-	//No longer used???
-	static extractExcelDataFromClipboard(){
-		// Extract the excel data from the clipboard.
-		// This method doesn't use navigator.clipboard.readText()
-		// because it can't be used in the console, instead using the
-		// execCommand method is used.
-
-		// Create and add a text input field anywhere in the dom to house our
-		// clipboard data, then extract the data from this text input box. Finally, delete
-		// the temporary input box after the data has been extracted from the element.
-		$("body").prepend("<input id=\"temp-input-box\" type=\"text\"></text>");
-		var $tempInputBox = $("body #temp-input-box");
-		$tempInputBox.focus().select();
-		document.execCommand("paste");
-		
-		return;
-		var extractedExcelData = $tempInputBox.val();
-		console.log("extractedExcelData: " + extractedExcelData);
-		$tempInputBox.remove();
-
-		return extractedExcelData;
-	}
+	// Utility class to set up the web page
 
 	static fillBtnHandler(){
 		// Extract the excel data from the fill input box.
 		var inputElData = $("#excel-data-input").val();
 		console.log("inputElData: " + inputElData);
 
-		// create an instance of ExcelRowData with the extracted data
-		
+		// Create an instance of ExcelRowData
 		var excelRowData = new ExcelRowData(inputElData);
 
-		// Store the excel data in local variables
+		// Extract some of the data in local varaibles
 		var email = excelRowData.getData(ExcelRowData.EMAIL_COL);
 		var phone = excelRowData.getData(ExcelRowData.PHONE_COL);
-
-		console.log("email: " + email)
-		console.log("phone: " + phone)
+		var street = excelRowData.getData(ExcelRowData.STREET_COL);
+		var city = excelRowData.getData(ExcelRowData.CITY_COL);
+		var state = excelRowData.getData(ExcelRowData.STATE_COL);
+		var zipcode = excelRowData.getData(ExcelRowData.ZIP_COL);
+		var nmls = excelRowData.getData(ExcelRowData.NMLS_COL);
+		var contact = excelRowData.getData(ExcelRowData.CONTACT_COL);
+		var account = excelRowData.getData(ExcelRowData.LEGAL_NAME_COL);
 		
 		// Fill the contact form
 		ContactFormFiller.setEmailField(email);
 		ContactFormFiller.setWorkPhoneField(phone);
+		ContactFormFiller.setAddress(street, city, state, zipcode);
+		ContactFormFiller.setNMLSField(nmls);
+		ContactFormFiller.setAccountField(account);
+		ContactFormFiller.setContactField(contact);
 	}
 
 	static run(){
-		// Insert and input box and fill button. The insert box houses the text
-		// data that the user will paste. The fill button executes the filling process
-		// for each relevant field in the excel data
+		// Insert an input box and fill button. The insert box houses the text of the excel row
+		// data the user will paste. The fill button executes the filling logic
+		// for predetermined fields in the website page's form.
 		var fillContentElementHtml = 
 			"<div id=\"fill-process-container\"> " + 
 			"	<input type=\"text\" id=\"excel-data-input\"> <br>" + 
@@ -191,8 +137,11 @@ class setUp{
 		$("#InsertContact").after(fillContentElementHtml);
 
 		$("#fill-btn").click(setUp.fillBtnHandler)
-
 	}
 }
 
-setUp.run();
+$(document).ready(
+	function () {
+		setUp.run()
+	}
+);
