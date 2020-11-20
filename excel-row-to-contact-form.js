@@ -122,6 +122,29 @@ class setUp{
 		ContactFormFiller.setContactField(contact);
 	}
 
+	static makeSaveButtonLargerAndMoveLeft(){
+		// Make the save button larger and move it to the left by
+		// by sliding the container it's in to the left. The "move"
+		// to the left is done by deleting the element with the
+		// class "mainContentHeaderToolsCenter". This might have unwanted effects
+		// since a deletion was performed.
+		document.getElementById("MainContent_InsertContact_cmdSave").width="32";
+		document.getElementsByClassName("mainContentHeaderToolsCenter")[0].remove();
+	}
+
+	static focusOnExcelDataInputBox(){
+		// Focus on the excel data input box. By default,
+		// the website runs JS to auto focus on "Contact" form. 
+		// This method of focusing on the excel data input box waits
+		// X ammount of ms until it runs a .focus() command on
+		// the input box. 
+
+		// console.log("set timeout before");
+		// setTimeout(function(){ document.getElementById("excel-data-input").focus();}, 1500);
+		// console.log("set timeout after");
+		console.log("Not Implemented Yet - Work in progress");
+	}
+
 	static run(){
 		// Insert an input box and fill button. The insert box houses the text of the excel row
 		// data the user will paste. The fill button executes the filling logic
@@ -136,7 +159,15 @@ class setUp{
 
 		$("#InsertContact").after(fillContentElementHtml);
 
-		$("#fill-btn").click(setUp.fillBtnHandler)
+		$("#fill-btn").click(setUp.fillBtnHandler);
+
+		// Focus on the data input text box to make common
+		// pasting process faster
+		setUp.focusOnExcelDataInputBox();
+
+
+		// Make the save button larger and move it to the left
+		setUp.makeSaveButtonLargerAndMoveLeft();
 	}
 }
 
