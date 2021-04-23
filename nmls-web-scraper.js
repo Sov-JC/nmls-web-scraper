@@ -277,25 +277,37 @@ function get_company_name(){
 	return $("p.company").text().trim()
 }
 
-function get_dba(){
-	$span_el = $("span.nowrap").filter(
-		function(){
-			const white_space_unicode = "\u00A0"
-			if(/^Other\u00A0Trade\u00A0Names/.test($(this).text())){
-				console.log("** There's a hit! ** ")
-				console.log("The hit is: " + $(this).text())
-				return true
-			}else{
-				//console.log("--- the following is not a match ---")
-				//console.log($(this).text())
-				return false
+function get_dba(info_type){
+	// get doing business as information. 
+	// if on a company information page, it's "Other Trade Names" section,
+	// if on the individual information page, it's "Other Names" section
+	var dba = ""
+
+	if(info_type === information_type.COMPANY){
+		$span_el = $("span.nowrap").filter(
+			function(){
+				const white_space_unicode = "\u00A0"
+				if(/^Other\u00A0Trade\u00A0Names/.test($(this).text())){
+					console.log("** There's a hit! ** ")
+					console.log("The hit is: " + $(this).text())
+					return true
+				}else{
+					return false
+				}
 			}
-		}
-	)
+		)
+
+		dba = $span_el.parent().next().text().trim()
+	}else if(info_type === information_type.INDIVIDUAL){
+		dba = $("td[style='width:200px']").first().text().trim()
+	}
+
+	
 	
 	//console.assert($span_el.length === 1, "span_el for get_dba() is not equal to 1")
-
-	return $span_el.parent().next().text().trim()
+	// var dba = $span_el.parent().next().text().trim()
+	console.log("dba is [" + dba + "]")
+	return dba
 }
 
 // returns true if the contact from an INDIVIDUAL page
@@ -328,8 +340,6 @@ function is_authorized_to_represent_test(){
 	console.log("is authorized to represent: " + is_authorized_to_represent())
 	return
 }
-
-
 
 //Returns the "Authorized to Represent" string of an INDIVIDUAL page
 //if the contact is authorized to represent. Returns empty string otherwise
@@ -486,6 +496,7 @@ function test_script(){
 	)
 }
 
+// No longer used???
 function get_data_in_excel_format(){	
 	data = "\t" + 
 		get_company_name() + "\t" +
@@ -525,11 +536,11 @@ function get_data_in_excel_format_two(info_type){
 			get_email() + "\t" +
 			"\t" + //contact
 			get_website() + "\t" +
-			get_dba() + "\t" + 
+			get_dba(information_type.COMPANY) + "\t" + 
 			get_phone_number(info_type)
 			break;
 		case information_type.INDIVIDUAL:
-			/*
+			/* OLD INFORMATION ORDER
 			cell 1 is contact name
 			cell 2 is nmls
 			cell 3 is blank
@@ -544,24 +555,29 @@ function get_data_in_excel_format_two(info_type){
 			cell 12 is zip code
 			*/
 
-			/*
-			var individual_contact_name = get_individual_contact_name()
-			console.log("individual contact name is " + individual_contact_name)
-			var contact_nmls_id = get_nmls_two(info_type)
-			console.log("nmls_id is " + nmls_id)
-			var contact_phone_number = get_phone_number(info_type)
-			console.log("phone number is " + phone_number)
-			var authorized_to_represent_text = get_authorized_to_represent()
-			var office_locations = get_all_office_locations()
+			/* NEW INFORMATION ORDER
+			cell 1 is nmls
+			cell 8 is Contact
+			cell 10 is Other contact names DBA
+			cell 11 is Phone Number
 			*/
+
+			//const LINE_FEED = '&#10;'
+			//const CARRIAGE_RETURN = '&#13;'
+			data += "\t"
+			data += get_nmls(information_type.INDIVIDUAL)
+			data += "\t\t\t\t\t\t\t"
+			data += get_individual_contact_name() + "\t"
+			data += "\t"
+			data += get_dba(information_type.INDIVIDUAL) + "\t"
+			data += get_phone_number(information_type.INDIVIDUAL)
+
+			/*
 			var contact_nmls_id = get_nmls(info_type)
 			var contact_phone_number = get_phone_number(info_type)
 			var authorized_to_represent_text = get_authorized_to_represent()
 
 			var office_locations = get_all_office_locations()
-
-			//const LINE_FEED = '&#10;'
-			//const CARRIAGE_RETURN = '&#13;'
 
 			office_locations.forEach(function(item){
 
@@ -585,6 +601,7 @@ function get_data_in_excel_format_two(info_type){
 				zipCode + "\t" +
 				"\n" 
 			})
+			*/
 
 			break;
 		default:
@@ -817,5 +834,5 @@ function run(){
 }
 
 $( document ).ready(function() {
-    run()
+	run()
 });
