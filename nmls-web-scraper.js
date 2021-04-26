@@ -17,23 +17,15 @@ function get_individual_contact_name(){
 	return $("p").filter('.individual').text().trim()
 }
 
-//returns the nmls number as a string.
+// Returns the nmls number as a string.
 function get_nmls(info_type){
 
 	if(info_type == information_type.COMPANY ||
 		info_type == information_type.INDIVIDUAL){
-
-		
-		//get the span, then go up 2 parents, finaly select the following sibling
+		/*get the span, then go up 2 parents, finaly select the following sibling*/
 		$nmls_span = $("span:contains('NMLS ID:')")
-
 		$nmls_span_parent = $nmls_span.parent()
-		
-		//console.log($nmls_span_parent.html())
-		
-		var nmls = $nmls_span.parent().next().html() //html used, is there a safer way?
-		
-		
+		var nmls = $nmls_span.parent().next().html() // HTML used. Is there a safer way?
 		console.log("FINAL NMLS: " + nmls)
 		return nmls.trim()
 	}
@@ -41,46 +33,12 @@ function get_nmls(info_type){
 	return ""
 }
 
-function get_nmls_two_test(info_type){
-	get_nmls_two(info_type)
-}
-
-/*
-//returns the nmls number as a string of a company from a COMPANY page
-function get_nmls_OLD(){
-    //get the span, then go up 2 parents, finaly select the following sibling
-    $nmls_span = $("span:contains('NMLS ID:')")
-
-    $nmls_span_parent = $nmls_span.parent()
-
-    //console.log($nmls_span_parent.html())
-
-    nmls = $nmls_span.parent().next().html() //html used, is there a safer way?
-
-
-    console.log("FINAL NMLS: " + nmls)
-    return nmls.trim()
-}
-*/
-
-//get the street address of a company from a COMPANY page
-//returns an array. First element is street address 1, second element is street address 2
+// Get the street address of a company from a COMPANY page
+// Returns an array. First element is street address 1, second element is street address 2
 function get_street_address(){
     //$street_address_span = $("span:contains('Street&nbsp;Address')")
     $street_address_span = $("span:contains('Street')")
     $street_address_span = $("span:contains('Street Address')")
-
-    //street address has a &nbsp code that needs t be removed so that
-    //querying becomes easier.
-
-    //remove &nbsp
-    /*
-    $("span").filter(
-        function(){
-            return $this.text.
-        }
-    )
-    */
 
     //print out the name of the span using jQuery's text
 	$span_text = $("span").text()
@@ -89,10 +47,6 @@ function get_street_address(){
 	
 	$street_address_el = $("span").filter(	
 		function(index){
-			//console.log("----- el.text is: |" + $(this).text())
-			//regexp = /^Street/			
-			//console.log("regex result is: " + /^Street/.test($(this).text()))
-			//console.log("regex result is: " + new RegExp("^Street").test($(this).text()))
 			return /^Street/.test($(this).text())
 		}
 	)
@@ -110,35 +64,12 @@ function get_street_address(){
 	console.log("street one is: [" + $street_address_one_el.text().trim()+"]")
 	console.log("street two is: [" + $street_address_two_el.text().trim()+"]")
 
-	//console.log($span_text)
-	//street_addr_el_array = $.makeArray($street_address_el)
-	//console.log("street address el: " + street_addr_el_array)
-	//console.log("$street_address_span:" + $street_address_span.html())
-	
 	street_address_one = $street_address_one_el.text().trim()
 	street_address_two = $street_address_two_el.text().trim()
 
 
 	return [street_address_one, street_address_two]
 }
-
-/*
-function get_phone_number_OLD(){
-	$phone_label_el = $("td.label").filter(":contains('Phone')").eq(0)
-	//There is actually another td.label that contains 'Phone', but it is actually hidden!
-	//Since it occurs after the first td label that we are interested in, we ignore it by
-	//only selecting element 0
-	
-	console.log("phone_label_el length: " + $phone_label_el.length)
-	console.log("phone number td content is:" + $phone_label_el.text())
-
-	phone_number = $phone_label_el.next().text()
-	console.log("phone number is: " + phone_number)
-
-	return phone_number
-}
-*/
-
 
 function get_phone_number(info_type){
 	//method for scraping INDIVIDUAL and COMPANY phone number is the same
@@ -348,6 +279,35 @@ function get_authorized_to_represent(){
 		return $("span.nowrap").filter(":contains('Authorized to Represent')").parent().next().text().trim()
 	else
 		return ""
+}
+
+//Returns the companie names and NMLS IDs of the companies an individual works for
+//Returns an array of two arrays. The first array is the name of the companies, and
+//the second is an array of the NMLS IDs corresponding to the first array.
+function get_authorized_to_represent_names_and_nmls(){
+	let atr_string = get_authorized_to_represent()
+	let atr_strings = atr_string.split('; ')
+	console.log("atr_string: ", atr_string)
+	console.log("atr_strings:", atr_strings)
+	
+	let company_names = []
+	let nmls_ids = []
+
+	atr_strings.forEach( 
+		(atr) => {
+			let o_parenthesis_index = atr.indexOf('(')
+			let c_parenthesis_index = atr.indexOf(')')
+			let company_name = atr.substring(0, o_parenthesis_index).trim()
+			let nmls_id = atr.substring(o_parenthesis_index+1, c_parenthesis_index)
+			company_names.push(company_name)
+			nmls_ids.push(nmls_id)
+		}
+	);
+
+	console.log("company_names: " , company_names)
+	console.log("nmls_ids:", nmls_ids)
+
+	return [company_names, nmls_ids]
 }
 
 function get_authorized_to_represent_test(){
@@ -564,13 +524,21 @@ function get_data_in_excel_format_two(info_type){
 
 			//const LINE_FEED = '&#10;'
 			//const CARRIAGE_RETURN = '&#13;'
-			data += "\t"
-			data += get_nmls(information_type.INDIVIDUAL)
-			data += "\t\t\t\t\t\t\t"
-			data += get_individual_contact_name() + "\t"
-			data += "\t"
-			data += get_dba(information_type.INDIVIDUAL) + "\t"
-			data += get_phone_number(information_type.INDIVIDUAL)
+			let atr_cnames_and_nmls_ids = get_authorized_to_represent_names_and_nmls()
+			let company_names = atr_cnames_and_nmls_ids[0]
+			let nmls_ids = atr_cnames_and_nmls_ids[1]
+
+			for(let i=0; i<company_names.length; i++){
+				data += company_names[i] + "\t"
+				data += nmls_ids[i] + "\t"
+				data += "\t\t\t\t\t\t\t"
+				data += get_individual_contact_name() + "\t"
+				data += "\t"
+				data += get_dba(information_type.INDIVIDUAL) + "\t"
+				data += get_phone_number(information_type.INDIVIDUAL) + "\n"
+			}
+
+			
 
 			/*
 			var contact_nmls_id = get_nmls(info_type)
