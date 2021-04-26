@@ -456,38 +456,13 @@ function test_script(){
 	)
 }
 
-// No longer used???
-function get_data_in_excel_format(){	
-	data = "\t" + 
-		get_company_name() + "\t" +
-		get_nmls() + "\t" +
-		"\t" +
-		"\t" + 
-		get_sponsored_mlos() + "\t" +
-		get_street_address()[0] + "\t" +
-		get_city() + "\t" +
-		get_state() + "\t" +
-		get_zip_code() + "\t" +
-		get_email() + "\t" +
-		"\t" + //contact
-		get_website() + "\t" +
-		get_dba() + "\t" + 
-		get_phone_number()
-
-	return data
-}
-
-
 //returns a string that's copy-pastable in Excel spreadsheets
 function get_data_in_excel_format_two(info_type){
 	var data = ""
 	switch(info_type){
 		case information_type.COMPANY:
-			data = "\t" + 
-			get_company_name() + "\t" +
+			data = get_company_name() + "\t" +
 			get_nmls(info_type) + "\t" +
-			"\t" +
-			"\t" + 
 			get_sponsored_mlos() + "\t" +
 			get_street_address()[0] + "\t" +
 			get_city() + "\t" +
@@ -497,7 +472,8 @@ function get_data_in_excel_format_two(info_type){
 			"\t" + //contact
 			get_website() + "\t" +
 			get_dba(information_type.COMPANY) + "\t" + 
-			get_phone_number(info_type)
+			get_phone_number(info_type) + "\t" + 
+			"C" + "\n"
 			break;
 		case information_type.INDIVIDUAL:
 			/* OLD INFORMATION ORDER
@@ -531,11 +507,12 @@ function get_data_in_excel_format_two(info_type){
 			for(let i=0; i<company_names.length; i++){
 				data += company_names[i] + "\t"
 				data += nmls_ids[i] + "\t"
-				data += "\t\t\t\t\t\t\t"
+				data += "\t\t\t\t\t\t"
 				data += get_individual_contact_name() + "\t"
 				data += "\t"
 				data += get_dba(information_type.INDIVIDUAL) + "\t"
-				data += get_phone_number(information_type.INDIVIDUAL) + "\n"
+				data += get_phone_number(information_type.INDIVIDUAL) + "\t"
+				data += "I" + "\n"
 			}
 
 			
