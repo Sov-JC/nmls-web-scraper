@@ -492,10 +492,12 @@ function get_data_in_excel_format_two(info_type){
 			*/
 
 			/* NEW INFORMATION ORDER
+			cell 0 
 			cell 1 is nmls
-			cell 8 is Contact
-			cell 10 is Other contact names DBA
-			cell 11 is Phone Number
+			cell 6 is Contact
+			cell 8 is Other contact names DBA
+			cell 9 is Phone Number
+			cell 10 is I for Individual
 			*/
 
 			//const LINE_FEED = '&#10;'
@@ -507,7 +509,7 @@ function get_data_in_excel_format_two(info_type){
 			for(let i=0; i<company_names.length; i++){
 				data += company_names[i] + "\t"
 				data += nmls_ids[i] + "\t"
-				data += "\t\t\t\t\t\t"
+				data += "\t\t\t\t"
 				data += get_individual_contact_name() + "\t"
 				data += "\t"
 				data += get_dba(information_type.INDIVIDUAL) + "\t"
